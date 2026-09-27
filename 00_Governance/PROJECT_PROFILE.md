@@ -50,7 +50,7 @@ This profile contains the required product-profile subjects for the proposed `ha
 | --- | --- | --- | --- |
 | Public static asset content | consumed | `ha-assets` | `83degrees/ha-assets` remains authoritative for asset content. |
 | Home Assistant replication/materialisation mechanism | owned | `ha-assets-sync` | Owns archive acquisition, staging, validation, safe replacement, scheduling and logging. |
-| Local destination subtree | owned operational boundary | `ha-assets-sync` | Writes are hard-bound to `/config/www/ha-assets/`. |
+| Local replication write boundary | owned operational boundary | `ha-assets-sync` | Writes are hard-bound to `/config/www/ha-assets/`, `/config/www/.ha-assets-sync-staging/`, and `/config/www/.ha-assets-sync-previous/`. |
 | MediaCat artwork metadata/resolution | external | MediaCat | MediaCat may consume local/public asset routes but does not own replication. |
 | GitHub archive delivery | external | GitHub | Public HTTPS source for the selected repository revision. |
 | Home Assistant runtime / Supervisor app platform | external | Home Assistant | Hosts the app and exposes the configured writable filesystem mapping. |
@@ -59,7 +59,7 @@ This profile contains the required product-profile subjects for the proposed `ha
 
 - Approved architecture location: `01_Architecture/HA_ASSETS_SYNC_ARCHITECTURE.md`
 - Architecture state: proposed
-- Material DDRs: proposed under ASTV-268
+- Material DDRs: `DDR-05-001` (Proposed)
 
 ## Contracts provided
 
@@ -85,7 +85,7 @@ None currently.
 | --- | --- | --- | --- | --- |
 | `ha-assets-sync` | owned | ha-assets-sync | Product/repository/app identity | This profile and architecture |
 | `ha-assets` | external | ha-assets | Consumed repository/content identity only | `83degrees/ha-assets` |
-| `/config/www/ha-assets/` | owned operational boundary | ha-assets-sync | Hard-bound materialisation destination | Architecture |
+| `/config/www/ha-assets/` and fixed sync siblings | owned operational boundary | ha-assets-sync | Hard-bound materialisation/staging/rollback paths | Architecture / DDR-05-001 |
 | `/local/ha-assets/` | external serving projection | Home Assistant | Read-only consumer URL projection of the destination | Home Assistant static-file behaviour |
 
 ## Production and evidence route
