@@ -49,7 +49,16 @@ staged candidate
 
 ## 4. Safety boundary
 
-The live destination is fixed to `/config/www/ha-assets/`.
+The active mirror is fixed to `/config/www/ha-assets/`.
+
+Safe same-filesystem activation also requires two fixed sibling paths:
+
+- `/config/www/.ha-assets-sync-staging/` — transient activation staging;
+- `/config/www/.ha-assets-sync-previous/` — transient rollback location.
+
+These three paths form the complete product-owned write boundary. None is user-configurable.
+
+Inside the app container, Home Assistant maps the host configuration directory to `/homeassistant`, so the implementation uses the corresponding container paths under `/homeassistant/www/`.
 
 The runtime must not provide a general user-configurable destination capable of targeting `/config`, arbitrary `/config/www/` subtrees, secrets, or unrelated Home Assistant state.
 
@@ -59,11 +68,11 @@ Downloaded content is treated as data only and is never executed.
 
 ## 5. Update semantics
 
-The runtime downloads and validates a complete candidate before replacing the active tree.
+The runtime resolves the configured branch to an exact Git commit, downloads and validates that complete candidate, and records the successfully installed revision in app-private persistent state.
 
-Failure during acquisition, extraction, or validation leaves the currently active tree unchanged.
+Failure during acquisition, extraction, candidate validation, or staging leaves the currently active tree unchanged.
 
-The implementation may retain one previous tree if required to make final replacement/restoration safe.
+Activation is performed with same-filesystem renames: the current live tree is moved to the fixed previous path, the validated staged tree is moved into the live path, and the previous tree is removed only after activation succeeds. If activation fails after moving the live tree, the previous tree is restored.
 
 The successfully installed source revision should be recorded so unchanged revisions can be detected without replacing the active tree unnecessarily.
 
@@ -73,6 +82,7 @@ The target runtime supports:
 
 - sync on app start;
 - configurable periodic refresh;
+- exact-revision comparison so unchanged revisions do not replace the live tree;
 - clear success, no-change and failure logging;
 - app restart as the initial manual sync trigger.
 
