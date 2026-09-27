@@ -2,16 +2,17 @@
 
 ## Profile conformance
 
-This profile contains the required product-profile subjects for the proposed `ha-assets-sync` product.
+This profile contains the required product-profile subjects for the implemented `ha-assets-sync` product.
 
 ## Document status
 
-- Governance state: proposed
+- Governance state: current
 
 ## Product identity
 
 - Product name: ha-assets-sync
 - Repository: `83degrees/ha-assets-sync`
+- Repository visibility: public
 - DDR origin code: `05`
 
 ## Linear work routing
@@ -58,8 +59,8 @@ This profile contains the required product-profile subjects for the proposed `ha
 ## Approved architecture location
 
 - Approved architecture location: `01_Architecture/HA_ASSETS_SYNC_ARCHITECTURE.md`
-- Architecture state: proposed
-- Material DDRs: `DDR-05-001` (Proposed)
+- Architecture state: implemented/current
+- Material DDRs: `DDR-05-001` (Accepted)
 
 ## Contracts provided
 
@@ -90,17 +91,19 @@ None currently.
 
 ## Production and evidence route
 
-- Production route: Home Assistant app deployment to managed HA instances, initially including `ha-starburst` and `ha-shorefoot`.
+- Production route: Home Assistant app deployment to managed HA instances, initially `ha-starburst`, with `ha-shorefoot` as an additional intended target.
 - Evidence route: governed repository state plus deployment/runtime evidence from the applicable Home Assistant instance.
 - Secrets and mutable-state boundary: no GitHub credential is required for the public source; mutable installed-revision/runtime state remains outside governed source.
-- Validation evidence route: repository tests and governed validation evidence under the standard product structure.
-- Known limitations: no production deployment exists yet; implementation begins under ASTV-268.
+- Validation evidence route: repository tests plus deployment/runtime evidence recorded against the governing Linear issue.
+- Current deployment evidence: `ha-starburst` is running the app; first materialisation, local `/local/ha-assets/...` serving and repeated no-change checks have been observed under ASTV-268.
+- Known limitation pending ASTV-268 closure: real-world propagation of a subsequent source-repository revision remains to be demonstrated.
 
 ## Current and target state summary
 
 | Area | State | Statement | Authority/evidence |
 | --- | --- | --- | --- |
-| Product repository | current implemented | Private repository exists at `83degrees/ha-assets-sync`. | GitHub |
-| Replication runtime | proposed | Purpose-built Home Assistant archive-based replication app. | ASTV-268 |
-| Local destination | proposed | Hard-bound `/config/www/ha-assets/`. | ASTV-268 / architecture |
+| Product repository | current implemented | Public repository exists at `83degrees/ha-assets-sync`. | GitHub |
+| Replication runtime | current implemented | Purpose-built Home Assistant archive-based replication app is implemented and running on `ha-starburst`. | ASTV-268 runtime evidence |
+| Local destination | current implemented | Destination is hard-bound to `/config/www/ha-assets/` with fixed sibling staging/rollback paths. | Architecture / implementation |
+| Local serving | current implemented | Home Assistant serves replicated assets under `/local/ha-assets/...`; verified on `ha-starburst`. | ASTV-268 runtime evidence |
 | Public asset authority | current implemented | `83degrees/ha-assets` remains authoritative for public static content. | ASTV-266 |
