@@ -18,6 +18,11 @@ def validate_repository(repository: str) -> str:
     repository = repository.strip()
     if not _REPOSITORY_RE.fullmatch(repository):
         raise SourceError("repository must be in owner/name form")
+
+    owner, name = repository.split("/", 1)
+    if owner in {".", ".."} or name in {".", ".."}:
+        raise SourceError("repository owner/name segments cannot be '.' or '..'")
+
     return repository
 
 
