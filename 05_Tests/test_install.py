@@ -2,6 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "ha_assets_sync" / "app"))
@@ -48,6 +49,38 @@ class InstallTests(unittest.TestCase):
 
             self.assertFalse((live / "media-assets" / "old.txt").exists())
             self.assertEqual((live / "media-assets" / "new.txt").read_text(), "new")
+            self.assertFalse(previous.exists())
+
+    def test_activation_failure_restores_previous_live_tree(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            live = root / "ha-assets"
+            staging = root / ".staging"
+            previous = root / ".previous"
+            candidate = root / "candidate"
+
+            (live / "media-assets").mkdir(parents=True)
+            (live / "media-assets" / "old.txt").write_text("old")
+
+            (candidate / "media-assets").mkdir(parents=True)
+            (candidate / "media-assets" / "new.txt").write_text("new")
+
+            paths = InstallPaths(live=live, staging=staging, previous=previous)
+            prepare_staging(candidate, paths)
+
+            original_rename = Path.rename
+
+            def controlled_rename(path, target):
+                if path == staging:
+                    raise OSError("simulated activation failure")
+                return original_rename(path, target)
+
+            with patch.object(Path, "rename", new=controlled_rename):
+                with self.assertRaises(InstallError):
+                    activate_staging(paths)
+
+            self.assertTrue((live / "media-assets" / "old.txt").exists())
+            self.assertFalse((live / "media-assets" / "new.txt").exists())
             self.assertFalse(previous.exists())
 
     def test_state_round_trip(self):

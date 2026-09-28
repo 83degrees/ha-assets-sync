@@ -2,9 +2,9 @@
 
 ## 1. Status and authority
 
-This document is the proposed authoritative architecture for `ha-assets-sync`, established through ASTV-269 and intended to govern the runtime implementation tracked by ASTV-268 once accepted.
+This document is the authoritative implemented architecture for `ha-assets-sync`, established through ASTV-269 and implemented/validated through ASTV-268.
 
-It describes the product boundary and target architecture. It must not be read as evidence that the runtime is already implemented or deployed.
+It describes the current product boundary and runtime architecture.
 
 ## 2. Product responsibility
 
@@ -22,7 +22,7 @@ Home Assistant exposes that subtree to consumers as:
 
 The product does not own the asset content, MediaCat catalogue semantics, GitHub Pages delivery, or Google Cast behaviour.
 
-## 3. Target flow
+## 3. Implemented flow
 
 ```text
 83degrees/ha-assets
@@ -60,9 +60,9 @@ These three paths form the complete product-owned write boundary. None is user-c
 
 Inside the app container, Home Assistant maps the host configuration directory to `/homeassistant`, so the implementation uses the corresponding container paths under `/homeassistant/www/`.
 
-The runtime must not provide a general user-configurable destination capable of targeting `/config`, arbitrary `/config/www/` subtrees, secrets, or unrelated Home Assistant state.
+The runtime does not provide a general user-configurable destination capable of targeting `/config`, arbitrary `/config/www/` subtrees, secrets, or unrelated Home Assistant state.
 
-Archive handling must reject unsafe members, including path traversal and absolute paths, and must prevent symlink-based escape from the staging boundary.
+Archive handling rejects unsafe members, including path traversal, absolute paths, symlinks, hardlinks, devices and FIFOs.
 
 Downloaded content is treated as data only and is never executed.
 
@@ -74,11 +74,11 @@ Failure during acquisition, extraction, candidate validation, or staging leaves 
 
 Activation is performed with same-filesystem renames: the current live tree is moved to the fixed previous path, the validated staged tree is moved into the live path, and the previous tree is removed only after activation succeeds. If activation fails after moving the live tree, the previous tree is restored.
 
-The successfully installed source revision should be recorded so unchanged revisions can be detected without replacing the active tree unnecessarily.
+The successfully installed source revision is recorded so unchanged revisions are detected without replacing the active tree unnecessarily.
 
 ## 6. Scheduling and operation
 
-The target runtime supports:
+The runtime supports:
 
 - sync on app start;
 - configurable periodic refresh;
@@ -100,4 +100,4 @@ MediaCat and other consumers may use the resulting local paths but do not contro
 
 ## 8. Durable decision
 
-The selection of an archive-based purpose-built replicator over GitOps, rclone/cloud intermediary, Syncthing and per-file manifest/downloader approaches is material and is to be captured by the product DDR created under ASTV-268.
+The archive-based purpose-built replication decision is recorded in accepted `DDR-05-001 — Archive-based Home Assistant asset replication`.
