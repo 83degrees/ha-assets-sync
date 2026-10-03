@@ -89,9 +89,17 @@ None currently.
 | `/config/www/ha-assets/` and fixed sync siblings | owned operational boundary | ha-assets-sync | Hard-bound materialisation/staging/rollback paths | Architecture / DDR-05-001 |
 | `/local/ha-assets/` | external serving projection | Home Assistant | Read-only consumer URL projection of the destination | Home Assistant static-file behaviour |
 
+## Repository and App package layout
+
+- Root `repository.yaml` is the required Home Assistant custom-repository manifest.
+- The single authoritative App package is `04_Source/ha_assets_sync/**`.
+- Home Assistant Supervisor recursively discovers `04_Source/ha_assets_sync/config.yaml` from the repository root.
+- No duplicate deployable App package is maintained at repository root.
+- App identity remains `ha_assets_sync`; versioning remains owned by the canonical nested `config.yaml`.
+
 ## Production and evidence route
 
-- Production route: Home Assistant app deployment to managed HA instances, initially `ha-starburst`, with `ha-shorefoot` as an additional intended target.
+- Production route: Home Assistant app deployment from the governed custom repository to managed HA instances, initially `ha-starburst`, with `ha-shorefoot` as an additional intended target. Beta uses the branch-qualified `https://github.com/83degrees/ha-assets-sync#beta` route; stable uses the accepted stable repository state.
 - Evidence route: governed repository state plus deployment/runtime evidence from the applicable Home Assistant instance.
 - Secrets and mutable-state boundary: no GitHub credential is required for the public source; mutable installed-revision/runtime state remains outside governed source.
 - Validation evidence route: repository tests plus deployment/runtime evidence recorded against the governing Linear issue.
@@ -103,6 +111,7 @@ None currently.
 | Area | State | Statement | Authority/evidence |
 | --- | --- | --- | --- |
 | Product repository | current implemented | Public repository exists at `83degrees/ha-assets-sync`. | GitHub |
+| Repository layout | current implemented | Root `repository.yaml` identifies the custom repository and the single authoritative App package resides at `04_Source/ha_assets_sync/**`, discoverable recursively by Supervisor. | ASTV-292 / ASTV-294 / repository layout tests |
 | Replication runtime | current implemented | Purpose-built Home Assistant archive-based replication app is implemented and running on `ha-starburst`. | ASTV-268 runtime evidence |
 | Local destination | current implemented | Destination is hard-bound to `/config/www/ha-assets/` with fixed sibling staging/rollback paths. | Architecture / implementation |
 | Local serving | current implemented | Home Assistant serves replicated assets under `/local/ha-assets/...`; verified on `ha-starburst`. | ASTV-268 runtime evidence |
