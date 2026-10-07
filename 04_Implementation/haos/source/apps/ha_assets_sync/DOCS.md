@@ -4,7 +4,10 @@
 
 The custom app repository must be publicly readable because Home Assistant Supervisor clones custom repositories anonymously.
 
-The authoritative App package is stored under `04_Source/ha_assets_sync/`. Supervisor recursively discovers its `config.yaml`; `repository.yaml` remains at repository root, and there is no duplicate root-level App package.
+The authoritative App package is stored under
+`04_Implementation/haos/source/apps/ha_assets_sync/`. Supervisor recursively
+discovers its `config.yaml`; `repository.yaml` remains at repository root, and
+there is no duplicate root-level App package.
 
 1. Open **Settings → Apps → Install app**.
 2. Open the app-store menu and choose **Repositories**.

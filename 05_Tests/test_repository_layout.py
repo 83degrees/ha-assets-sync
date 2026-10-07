@@ -3,7 +3,14 @@ from pathlib import Path
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-APP_ROOT = REPOSITORY_ROOT / "04_Source" / "ha_assets_sync"
+APP_ROOT = (
+    REPOSITORY_ROOT
+    / "04_Implementation"
+    / "haos"
+    / "source"
+    / "apps"
+    / "ha_assets_sync"
+)
 
 
 class RepositoryLayoutTests(unittest.TestCase):
@@ -36,6 +43,7 @@ class RepositoryLayoutTests(unittest.TestCase):
                 self.assertTrue((APP_ROOT / relative_path).is_file())
 
         self.assertFalse((REPOSITORY_ROOT / "ha_assets_sync").exists())
+        self.assertFalse((REPOSITORY_ROOT / "04_Source").exists())
 
 
 if __name__ == "__main__":
