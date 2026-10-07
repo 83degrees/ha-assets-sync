@@ -6,7 +6,10 @@ sys.path.insert(
     0,
     str(
         Path(__file__).resolve().parents[1]
-        / "04_Source"
+        / "04_Implementation"
+        / "haos"
+        / "source"
+        / "apps"
         / "ha_assets_sync"
         / "app"
     ),
